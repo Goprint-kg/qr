@@ -1,0 +1,184 @@
+<!--
+  birthday-github-page.html
+  Single-file static page for a birthday photo gallery suitable for GitHub Pages.
+
+  How to use:
+  1. Create a new GitHub repository (public or private if you have Pages enabled).
+  2. Add this file as index.html to the repository root.
+  3. Create a folder named images/ in the repo and add your photos there (jpg/png/webp).
+     Name them like: images/photo1.jpg, images/photo2.jpg, ... or update the <img> src values below.
+  4. In the repository settings enable GitHub Pages (use branch main or gh-pages and root). After a minute your page will be live.
+
+  Notes:
+  - Replace the placeholder image file names with your actual file names.
+  - For many photos consider optimizing images for web to speed up loading.
+--><!doctype html>
+
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>С Днём Рождения 🎉 — Фотоальбом</title>
+  <meta name="description" content="Фотоальбом на день рождения" />
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --accent:#ff6b6b; --muted:#9aa4b2; --glass: rgba(255,255,255,0.04);
+      --gap:16px; --radius:14px;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0; background:linear-gradient(180deg,var(--bg),#071020); color:#e6edf3; -webkit-font-smoothing:antialiased}
+    .wrap{max-width:1100px; margin:32px auto; padding:24px}header{display:flex;gap:16px;align-items:center;margin-bottom:18px}
+.avatar{width:90px;height:90px;border-radius:50%;overflow:hidden;flex:0 0 90px;box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+h1{margin:0;font-size:28px}
+p.lead{margin:6px 0 0;color:var(--muted)}
+
+.controls{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+.btn{background:var(--glass);border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:10px;color:inherit;text-decoration:none;cursor:pointer}
+.btn.accent{background:linear-gradient(90deg,var(--accent),#ff8a8a);color:#031019;border:none}
+
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:var(--gap);margin-top:20px}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border-radius:12px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,0.03)}
+.card img{width:100%;height:160px;object-fit:cover;display:block;transition:transform .35s ease}
+.card:hover img{transform:scale(1.06)}
+.caption{padding:10px;font-size:13px;color:var(--muted)}
+
+/* Lightbox */
+.lightbox{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.8);z-index:999}
+.lightbox.show{display:flex}
+.lb-inner{max-width:90vw;max-height:90vh;position:relative}
+.lb-inner img{max-width:100%;max-height:100%;display:block;border-radius:10px}
+.lb-close,.lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:none;padding:10px;border-radius:8px;color:#fff;cursor:pointer}
+.lb-close{right:-10px;top:-10px;transform:none}
+.lb-prev{left:-54px}
+.lb-next{right:-54px}
+
+/* Footer */
+footer{margin-top:28px;color:var(--muted);font-size:13px;text-align:center}
+
+@media (max-width:520px){
+  header{flex-direction:row}
+  .avatar{width:70px;height:70px}
+  .card img{height:120px}
+  .lb-prev{left:8px}
+  .lb-next{right:8px}
+}
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="avatar"><img src="images/avatar.jpg" alt="Avatar (замените файл)"></div>
+      <div>
+        <h1>С днём рождения, Имя! 🎉</h1>
+        <p class="lead">Добро пожаловать в фотоальбом — память о лучших моментах.</p>
+        <div class="controls">
+          <a class="btn" href="#" id="startSlideshow">Запустить слайд-шоу</a>
+          <a class="btn" id="stopSlideshow">Остановить</a>
+          <a class="btn accent" href="#gallery">Перейти к фото</a>
+        </div>
+      </div>
+    </header><main>
+  <section id="gallery" class="gallery" aria-live="polite">
+    <!--
+      Добавьте сюда свои фото. Пример строки для фото:
+      <article class="card" data-title="Надпись под фото">
+        <img src="images/photo1.jpg" alt="Описание фото">
+        <div class="caption">Надпись под фото</div>
+      </article>
+    -->
+
+    <article class="card" data-title="Торт и свечи">
+      <img src="images/photo1.jpg" alt="Торт">
+      <div class="caption">Торт и свечи</div>
+    </article>
+
+    <article class="card" data-title="Друзья и семья">
+      <img src="images/photo2.jpg" alt="Друзья">
+      <div class="caption">Друзья и семья</div>
+    </article>
+
+    <article class="card" data-title="Подарки">
+      <img src="images/photo3.jpg" alt="Подарки">
+      <div class="caption">Подарки</div>
+    </article>
+
+    <!-- Копируйте карточки выше и меняйте src/caption для своих фото -->
+  </section>
+</main>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-hidden="true">
+  <div class="lb-inner">
+    <button class="lb-close" id="lbClose" aria-label="Закрыть">✕</button>
+    <button class="lb-prev" id="lbPrev" aria-label="Предыдущее">◀</button>
+    <img src="" alt="" id="lbImage">
+    <button class="lb-next" id="lbNext" aria-label="Следующее">▶</button>
+  </div>
+</div>
+
+<footer>
+  <div>Сделано с ❤ — добавьте свои фото в папку <code>images/</code> и замените подписи.</div>
+</footer>
+
+  </div>  <script>
+    // Простая логика lightbox + slideshow
+    const gallery = document.querySelectorAll('.card');
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lbImage');
+    const lbClose = document.getElementById('lbClose');
+    const lbPrev = document.getElementById('lbPrev');
+    const lbNext = document.getElementById('lbNext');
+    let current = 0;
+    let slideshowTimer = null;
+
+    function openAt(i){
+      const card = gallery[i];
+      const img = card.querySelector('img');
+      lbImg.src = img.src;
+      lbImg.alt = card.dataset.title || img.alt || '';
+      lb.classList.add('show');
+      lb.setAttribute('aria-hidden','false');
+      current = i;
+    }
+    function closeLB(){
+      lb.classList.remove('show');
+      lb.setAttribute('aria-hidden','true');
+      lbImg.src = '';
+    }
+    function prev(){ current = (current-1+gallery.length)%gallery.length; openAt(current); }
+    function next(){ current = (current+1)%gallery.length; openAt(current); }
+
+    gallery.forEach((card, i)=>{
+      card.addEventListener('click', ()=> openAt(i));
+    });
+    lbClose.addEventListener('click', closeLB);
+    lbPrev.addEventListener('click', prev);
+    lbNext.addEventListener('click', next);
+
+    // keyboard navigation
+    document.addEventListener('keydown', (e)=>{
+      if(!lb.classList.contains('show')) return;
+      if(e.key==='ArrowLeft') prev();
+      if(e.key==='ArrowRight') next();
+      if(e.key==='Escape') closeLB();
+    });
+
+    // Click outside image to close
+    lb.addEventListener('click', (e)=>{ if(e.target===lb) closeLB(); });
+
+    // Slideshow
+    const startBtn = document.getElementById('startSlideshow');
+    const stopBtn = document.getElementById('stopSlideshow');
+    function startSlideshow(ms=2500){
+      if(slideshowTimer) clearInterval(slideshowTimer);
+      let i = 0;
+      openAt(0);
+      slideshowTimer = setInterval(()=>{ i=(i+1)%gallery.length; openAt(i); }, ms);
+    }
+    function stopSlideshow(){ if(slideshowTimer){ clearInterval(slideshowTimer); slideshowTimer=null; } closeLB(); }
+    startBtn.addEventListener('click', (e)=>{ e.preventDefault(); startSlideshow(3000); });
+    stopBtn.addEventListener('click', (e)=>{ e.preventDefault(); stopSlideshow(); });
+  </script></body>
+</html>
